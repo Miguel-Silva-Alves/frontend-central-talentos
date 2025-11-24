@@ -1,0 +1,175 @@
+import 'package:flutter/material.dart';
+import 'package:frontend_central_talentos/views/components/sidebar/sidebar_component.dart';
+import 'package:frontend_central_talentos/views/components/topbar/topbar_component.dart';
+import 'package:frontend_central_talentos/views/components/topbar/topbar_parameter.dart';
+import 'package:frontend_central_talentos/views/routes/app_routes.dart';
+
+import 'upload_model.dart';
+import 'upload_vm.dart';
+
+class UploadScreen extends StatefulWidget {
+  const UploadScreen({super.key});
+
+  @override
+  State<UploadScreen> createState() => _UploadScreenState();
+}
+
+class _UploadScreenState extends State<UploadScreen> {
+  late UploadVm vm;
+
+  @override
+  void initState() {
+    super.initState();
+    vm = UploadVm();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<UploadModel>(
+      valueListenable: vm,
+      builder: (context, model, _) {
+        return Scaffold(
+          backgroundColor: const Color(0xFF0E0E0F),
+
+          // -----------------------------
+          //       TOP BAR
+          // -----------------------------
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(80),
+            child: TopBarWidget(
+              parameter: TopbarParameter(
+                onMenuPressed: vm.toggleSidebar,
+                goBack: AppRoutes.home,
+              ),
+            ),
+          ),
+
+          // -----------------------------
+          //       BODY + SIDEBAR
+          // -----------------------------
+          body: Row(
+            children: [
+              if (model.showSidebar)
+                const SideBarWidget(selectedItem: "Uploads"),
+
+              // CONTEÚDO PRINCIPAL
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // -----------------------------
+                      //     BOTÃO PRINCIPAL
+                      // -----------------------------
+                      GestureDetector(
+                        onTap: vm.pickFile,
+                        child: Container(
+                          width: 532,
+                          height: 259,
+                          padding: const EdgeInsets.all(32),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF101213),
+                            border: Border.all(
+                                color: const Color(0xFF464848), width: 1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.upload_file,
+                                  color: Colors.white.withOpacity(0.7),
+                                  size: 40),
+                              const SizedBox(height: 16),
+                              Text(
+                                model.fileName ??
+                                    "Clique para enviar um arquivo",
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.85),
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              if (model.isLoading) ...[
+                                const SizedBox(height: 20),
+                                const CircularProgressIndicator(
+                                    color: Colors.white),
+                              ]
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // ------------------------------------
+                      //      LISTA DE ARQUIVOS ENVIADOS
+                      // ------------------------------------
+                      if (model.uploadedFiles.isNotEmpty)
+                        Column(
+                          children: model.uploadedFiles.map((file) {
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: _uploadedFileTile(file),
+                            );
+                          }).toList(),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _uploadedFileTile(String fileName) {
+    return Container(
+      width: 532,
+      height: 67,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF101213),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: const Color(0xFF464848), width: 1),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // Ícone + Nome
+          Row(
+            children: [
+              Container(
+                width: 30,
+                height: 30,
+                alignment: Alignment.center,
+                child: Icon(Icons.insert_drive_file,
+                    size: 24, color: Colors.white.withOpacity(0.85)),
+              ),
+              const SizedBox(width: 20),
+              SizedBox(
+                width: 280,
+                child: Text(
+                  fileName,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: 15,
+                  ),
+                ),
+              )
+            ],
+          ),
+
+          // Botão EXCLUIR
+          GestureDetector(
+            onTap: () => vm.removeFile(fileName),
+            child: Icon(Icons.close,
+                color: Colors.white.withOpacity(0.6), size: 22),
+          )
+        ],
+      ),
+    );
+  }
+}
