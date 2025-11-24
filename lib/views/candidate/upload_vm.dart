@@ -66,4 +66,20 @@ class UploadVm extends ValueNotifier<UploadModel> {
       uploadedFiles: updatedList,
     );
   }
+
+  void changeSection(UploadSection section) {
+    value.section = section;
+    notifyListeners();
+  }
+
+  void openCandidate(String name) {
+    value.selectedCandidate = name;
+    value.section = UploadSection.detail;
+    notifyListeners();
+  }
+
+  void backToList() {
+    value.section = UploadSection.list;
+    notifyListeners();
+  }
 }

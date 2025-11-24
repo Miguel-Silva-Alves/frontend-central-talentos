@@ -1,9 +1,14 @@
+enum UploadSection { input, list, detail }
+
 class UploadModel {
   final bool showSidebar;
   final bool isLoading;
   final String? fileName;
   final List<String> uploadedFiles;
   final String? errorMessage;
+  UploadSection section;
+  // Para detalhes
+  String? selectedCandidate;
 
   UploadModel({
     this.showSidebar = true,
@@ -11,6 +16,8 @@ class UploadModel {
     this.fileName,
     this.uploadedFiles = const [],
     this.errorMessage,
+    this.selectedCandidate,
+    this.section = UploadSection.input,
   });
 
   UploadModel copyWith({
@@ -19,6 +26,7 @@ class UploadModel {
     String? fileName,
     List<String>? uploadedFiles,
     String? errorMessage,
+    UploadSection? section,
   }) {
     return UploadModel(
       showSidebar: showSidebar ?? this.showSidebar,
@@ -26,6 +34,7 @@ class UploadModel {
       fileName: fileName ?? this.fileName,
       uploadedFiles: uploadedFiles ?? this.uploadedFiles,
       errorMessage: errorMessage ?? this.errorMessage,
+      section: section ?? this.section,
     );
   }
 }

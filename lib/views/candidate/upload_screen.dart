@@ -58,61 +58,11 @@ class _UploadScreenState extends State<UploadScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      _internalMenu(model),
+                      Expanded(child: _internalContent(model)),
                       // -----------------------------
                       //     BOTÃO PRINCIPAL
                       // -----------------------------
-                      GestureDetector(
-                        onTap: vm.pickFile,
-                        child: Container(
-                          width: 532,
-                          height: 259,
-                          padding: const EdgeInsets.all(32),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF101213),
-                            border: Border.all(
-                                color: const Color(0xFF464848), width: 1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.upload_file,
-                                  color: Colors.white.withOpacity(0.7),
-                                  size: 40),
-                              const SizedBox(height: 16),
-                              Text(
-                                model.fileName ??
-                                    "Clique para enviar um arquivo",
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.85),
-                                  fontSize: 16,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              if (model.isLoading) ...[
-                                const SizedBox(height: 20),
-                                const CircularProgressIndicator(
-                                    color: Colors.white),
-                              ]
-                            ],
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 32),
-
-                      // ------------------------------------
-                      //      LISTA DE ARQUIVOS ENVIADOS
-                      // ------------------------------------
-                      if (model.uploadedFiles.isNotEmpty)
-                        Column(
-                          children: model.uploadedFiles.map((file) {
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: _uploadedFileTile(file),
-                            );
-                          }).toList(),
-                        ),
                     ],
                   ),
                 ),
@@ -121,6 +71,190 @@ class _UploadScreenState extends State<UploadScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _internalMenu(UploadModel model) {
+    return Container(
+      height: 50,
+      color: const Color(0xFF101213),
+      child: Row(
+        children: [
+          _menuTab(
+            label: "Cadastrar",
+            active: model.section == UploadSection.input,
+            onTap: () => vm.changeSection(UploadSection.input),
+          ),
+          _menuTab(
+            label: "Candidatos",
+            active: model.section == UploadSection.list,
+            onTap: () => vm.changeSection(UploadSection.list),
+          ),
+          _menuTab(
+            label: "Detalhes",
+            active: model.section == UploadSection.detail,
+            onTap: () => {},
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _internalContent(UploadModel model) {
+    switch (model.section) {
+      case UploadSection.input:
+        return _candidateInput(model);
+      case UploadSection.list:
+        return _candidateList();
+      case UploadSection.detail:
+        return _candidateDetail(model.selectedCandidate);
+    }
+  }
+
+  Widget _candidateInput(UploadModel model) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: vm.pickFile,
+            child: Container(
+              width: 532,
+              height: 259,
+              padding: const EdgeInsets.all(32),
+              decoration: BoxDecoration(
+                color: const Color(0xFF101213),
+                border: Border.all(color: const Color(0xFF464848), width: 1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.upload_file,
+                      color: Colors.white.withOpacity(0.7), size: 40),
+                  const SizedBox(height: 16),
+                  Text(
+                    model.fileName ?? "Clique para enviar um arquivo",
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.85),
+                      fontSize: 16,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  if (model.isLoading) ...[
+                    const SizedBox(height: 20),
+                    const CircularProgressIndicator(color: Colors.white),
+                  ]
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 32),
+
+          // ------------------------------------
+          //      LISTA DE ARQUIVOS ENVIADOS
+          // ------------------------------------
+          if (model.uploadedFiles.isNotEmpty)
+            Column(
+              children: model.uploadedFiles.map((file) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _uploadedFileTile(file),
+                );
+              }).toList(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _candidateList() {
+    final candidates = ["João Silva", "Maria Costa", "Lucas Rocha"];
+
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: candidates.map((c) {
+        return GestureDetector(
+          onTap: () => vm.openCandidate(c),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF101213),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFF464848)),
+            ),
+            child: Text(
+              c,
+              style: const TextStyle(color: Colors.white, fontSize: 16),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _candidateDetail(String? name) {
+    if (name == null) {
+      return const Center(
+        child: Text(
+          "Nenhum candidato selecionado",
+          style: TextStyle(color: Colors.white70),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            "Informações do candidato aqui...",
+            style: TextStyle(color: Colors.white70),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _menuTab({
+    required String label,
+    required bool active,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: active ? Colors.white : Colors.transparent,
+              width: 2,
+            ),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: active ? Colors.white : Colors.white70,
+            fontSize: 15,
+          ),
+        ),
+      ),
     );
   }
 
