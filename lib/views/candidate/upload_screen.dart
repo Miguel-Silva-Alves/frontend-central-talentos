@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_central_talentos/models/candidate.dart';
+import 'package:frontend_central_talentos/views/candidate/widgets/candidate_list.dart';
 import 'package:frontend_central_talentos/views/components/sidebar/sidebar_component.dart';
 import 'package:frontend_central_talentos/views/components/topbar/topbar_component.dart';
 import 'package:frontend_central_talentos/views/components/topbar/topbar_parameter.dart';
@@ -105,9 +107,18 @@ class _UploadScreenState extends State<UploadScreen> {
       case UploadSection.input:
         return _candidateInput(model);
       case UploadSection.list:
-        return _candidateList();
+        return CandidateListWidget(candidates: model.candidates, vm: vm);
       case UploadSection.detail:
-        return _candidateDetail(model.selectedCandidate);
+        if (model.selectedCandidate != null) {
+          return _candidateDetail(model.selectedCandidate!);
+        }
+        // fallback
+        return const Center(
+          child: Text(
+            "Nenhum candidato selecionado",
+            style: TextStyle(color: Colors.white70),
+          ),
+        );
     }
   }
 
@@ -170,49 +181,14 @@ class _UploadScreenState extends State<UploadScreen> {
     );
   }
 
-  Widget _candidateList() {
-    final candidates = ["João Silva", "Maria Costa", "Lucas Rocha"];
-
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: candidates.map((c) {
-        return GestureDetector(
-          onTap: () => vm.openCandidate(c),
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF101213),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: const Color(0xFF464848)),
-            ),
-            child: Text(
-              c,
-              style: const TextStyle(color: Colors.white, fontSize: 16),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _candidateDetail(String? name) {
-    if (name == null) {
-      return const Center(
-        child: Text(
-          "Nenhum candidato selecionado",
-          style: TextStyle(color: Colors.white70),
-        ),
-      );
-    }
-
+  Widget _candidateDetail(Candidate candidate) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            name,
+            candidate.name,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 22,
