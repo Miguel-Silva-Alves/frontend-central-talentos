@@ -89,7 +89,7 @@ class _TopBarWidgetState extends State<TopBarWidget> {
                             'assets/images/logo-empresa.png',
                             height: 48,
                             width: 150,
-                            fit: BoxFit.cover,
+                            // fit: BoxFit.cover,
                           ),
               ),
               const SizedBox(width: 16),
