@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:frontend_central_talentos/views/components/sidebar/sidebar_component.dart';
 import 'package:frontend_central_talentos/views/components/topbar/topbar_component.dart';
 import 'package:frontend_central_talentos/views/components/topbar/topbar_parameter.dart';
+import 'package:frontend_central_talentos/views/home/ai/ai_home_model.dart';
+import 'package:frontend_central_talentos/views/home/ai/ai_home_vm.dart';
+import 'package:frontend_central_talentos/views/home/ai/components/ai_card_component.dart';
 
 class AIHomeScreen extends StatefulWidget {
   const AIHomeScreen({super.key});
@@ -12,42 +15,80 @@ class AIHomeScreen extends StatefulWidget {
 
 class _AIHomeScreenState extends State<AIHomeScreen> {
   final TextEditingController promptController = TextEditingController();
+  late AIHomeVm vm;
+
+  @override
+  void initState() {
+    super.initState();
+    vm = AIHomeVm();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
-        child: TopBarWidget(
-          parameter: TopbarParameter(
-            onMenuPressed: () {},
-            goBack: null,
-          ),
-        ),
-      ),
-      body: Row(
-        children: [
-          const SideBarWidget(selectedItem: "IA"),
-          Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _titleGradient(),
-                    const SizedBox(height: 20),
-                    _subTitle(),
-                    const SizedBox(height: 50),
-                    _promptBox(),
-                  ],
+    return ValueListenableBuilder<AiHomeModel>(
+        valueListenable: vm,
+        builder: (context, model, _) {
+          if (model.goTo != null) {
+            final goTo = model.goTo!;
+            model.goTo = null;
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              Navigator.of(context).pushNamed(goTo);
+            });
+          }
+
+          return Scaffold(
+            backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+            appBar: PreferredSize(
+              preferredSize: const Size.fromHeight(80),
+              child: TopBarWidget(
+                parameter: TopbarParameter(
+                  onMenuPressed: () {},
+                  goBack: null,
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+            body: Row(
+              children: [
+                const SideBarWidget(selectedItem: "IA"),
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _titleGradient(),
+                          const SizedBox(height: 20),
+                          _subTitle(),
+                          const SizedBox(height: 50),
+                          _promptBox(),
+                          if (model.isLoading)
+                            const Padding(
+                              padding: EdgeInsets.only(top: 40),
+                              child: CircularProgressIndicator(
+                                  color: Colors.white),
+                            ),
+                          if (!model.isLoading && model.candidates.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 40),
+                              child: Column(
+                                children: model.candidates
+                                    .map((c) => Padding(
+                                          padding:
+                                              const EdgeInsets.only(bottom: 20),
+                                          child: AiCandidateCard(candidate: c),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
   }
 
   // --------------------------
@@ -105,7 +146,7 @@ class _AIHomeScreenState extends State<AIHomeScreen> {
   Widget _promptBox() {
     return Container(
       width: 659,
-      height: 76,
+      padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: const Color(0xFF181E29),
         boxShadow: [
@@ -113,81 +154,87 @@ class _AIHomeScreenState extends State<AIHomeScreen> {
             color: Colors.black.withOpacity(0.10),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
         borderRadius: BorderRadius.circular(48),
       ),
-      child: Stack(
-        children: [
-          // Ícone + Input
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.link,
-                  color: Color(0xFFC9CED6),
-                  size: 24,
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: TextField(
-                    controller: promptController,
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      hintText: "Coloque as característica que você busca...",
-                      hintStyle: TextStyle(
-                        color: Color(0xFFC9CED6),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.link,
+              color: Color(0xFFC9CED6),
+              size: 24,
+            ),
+
+            const SizedBox(width: 20),
+
+            // ------------------------------------------------
+            // TEXTFIELD EXPANSÍVEL
+            // ------------------------------------------------
+            Expanded(
+              child: TextField(
+                controller: promptController,
+                maxLines: null,
+                keyboardType: TextInputType.multiline,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "Coloque as características que você busca...",
+                  hintStyle: TextStyle(
+                    color: Color(0xFFC9CED6),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
 
-          // Botão — posicionado à direita
-          Positioned(
-            right: 8,
-            top: 8,
-            bottom: 8,
-            child: GestureDetector(
-              onTap: () {
-                final text = promptController.text.trim();
-                if (text.isEmpty) return;
+            const SizedBox(width: 20),
 
-                debugPrint("ENVIAR → $text");
-              },
-              child: Container(
-                width: 178,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF144EE3),
-                  borderRadius: BorderRadius.circular(48),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF144EE3).withOpacity(0.38),
-                      blurRadius: 22,
-                      offset: const Offset(10, 9),
-                    )
-                  ],
-                ),
-                child: const Center(
-                  child: Text(
-                    "Pesquisar",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+            // ------------------------------------------------
+            // BOTÃO QUE DESCE JUNTO COM O INPUT
+            // ------------------------------------------------
+            Align(
+              alignment: Alignment.topCenter,
+              child: GestureDetector(
+                onTap: () async {
+                  final text = promptController.text.trim();
+                  if (text.isEmpty) return;
+
+                  await vm.searchCandidates(text);
+                },
+                child: Container(
+                  width: 178,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF144EE3),
+                    borderRadius: BorderRadius.circular(48),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF144EE3).withOpacity(0.38),
+                        blurRadius: 22,
+                        offset: const Offset(10, 9),
+                      )
+                    ],
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Pesquisar",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
