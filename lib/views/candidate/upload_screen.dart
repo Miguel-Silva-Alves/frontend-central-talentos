@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontend_central_talentos/models/candidate.dart';
+import 'package:frontend_central_talentos/views/candidate/detail/candidate_detail_screen.dart';
 import 'package:frontend_central_talentos/views/candidate/widgets/candidate_list.dart';
 import 'package:frontend_central_talentos/views/components/sidebar/sidebar_component.dart';
 import 'package:frontend_central_talentos/views/components/topbar/topbar_component.dart';
@@ -110,7 +110,7 @@ class _UploadScreenState extends State<UploadScreen> {
         return CandidateListWidget(candidates: model.candidates, vm: vm);
       case UploadSection.detail:
         if (model.selectedCandidate != null) {
-          return _candidateDetail(model.selectedCandidate!);
+          return CandidateDetailScreen(candidate: model.selectedCandidate!);
         }
         // fallback
         return const Center(
@@ -204,150 +204,6 @@ class _UploadScreenState extends State<UploadScreen> {
                 ),
               ],
             ),
-        ],
-      ),
-    );
-  }
-
-  Widget _candidateDetail(Candidate candidate) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // -----------------------------------------
-          // HEADER
-          // -----------------------------------------
-          Row(
-            children: [
-              // FOTO
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  candidate.photoUrl,
-                  width: 90,
-                  height: 90,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      'assets/images/default_user.png',
-                      width: 90,
-                      height: 90,
-                      fit: BoxFit.cover,
-                    );
-                  },
-                ),
-              ),
-
-              const SizedBox(width: 20),
-
-              // NOME + EMAIL
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    candidate.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    candidate.email,
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 24),
-
-          // -----------------------------------------
-          // DESCRIÇÃO
-          // -----------------------------------------
-          Text(
-            candidate.description,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-            ),
-          ),
-
-          const SizedBox(height: 28),
-
-          // -----------------------------------------
-          // NUVEM DE HABILIDADES (KEY SKILLS)
-          // -----------------------------------------
-          const Text(
-            "Habilidades principais",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: candidate.keySkills.map((skill) {
-              return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white24),
-                ),
-                child: Text(
-                  skill,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-
-          const SizedBox(height: 32),
-
-          // -----------------------------------------
-          // BOTÃO DE CONFIRMAÇÃO / SALVAR
-          // -----------------------------------------
-          Align(
-            alignment: Alignment.centerLeft,
-            child: SizedBox(
-              width: 180,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () {
-                  // vm.confirmCandidate(candidate);
-                  // ou o que vc quiser
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF4CAF50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  "Salvar",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          )
         ],
       ),
     );

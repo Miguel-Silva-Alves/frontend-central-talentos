@@ -12,4 +12,20 @@ class Candidate {
     required this.description,
     required this.keySkills,
   });
+
+  Candidate copyWith({
+    String? photoUrl,
+    String? name,
+    String? email,
+    String? description,
+    List<String>? keySkills,
+  }) {
+    return Candidate(
+      photoUrl: photoUrl ?? this.photoUrl,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      description: description ?? this.description,
+      keySkills: keySkills ?? this.keySkills,
+    );
+  }
 }
