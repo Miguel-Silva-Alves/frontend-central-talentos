@@ -44,6 +44,14 @@ class CandidateListWidget extends StatelessWidget {
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/images/default_user.png',
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.cover,
+                      );
+                    },
                   ),
                 ),
 

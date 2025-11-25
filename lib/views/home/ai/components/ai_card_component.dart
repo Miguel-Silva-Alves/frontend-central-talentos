@@ -26,8 +26,17 @@ class AiCandidateCard extends StatelessWidget {
               width: 90,
               height: 90,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  'assets/images/default_user.png',
+                  width: 90,
+                  height: 90,
+                  fit: BoxFit.cover,
+                );
+              },
             ),
           ),
+
           const SizedBox(width: 20),
 
           // INFO
