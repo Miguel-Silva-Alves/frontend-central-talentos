@@ -15,10 +15,6 @@ class SideBarWidget extends StatelessWidget {
           'icon': Icons.emoji_people,
           'goTo': AppRoutes.candidateInput,
         },
-        'Relatórios': {
-          'icon': Icons.analytics,
-          'clickable': false, // título de grupo, não clicável
-        },
       };
 
   @override

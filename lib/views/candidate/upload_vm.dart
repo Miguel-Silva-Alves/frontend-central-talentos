@@ -107,22 +107,46 @@ class UploadVm extends ValueNotifier<UploadModel> {
         name: "João Silva",
         email: "joao.silva@example.com",
         description: "Desenvolvedor Full Stack com 5 anos de experiência.",
+        keySkills: ["Dart", "Flutter", "JavaScript"],
       ),
       Candidate(
         photoUrl: "https://i.pravatar.cc/150?img=2",
         name: "Maria Costa",
         email: "maria.costa@example.com",
         description: "Designer UI/UX apaixonada por experiência do usuário.",
+        keySkills: ["Figma", "Adobe XD", "Sketch"],
       ),
       Candidate(
         photoUrl: "https://i.pravatar.cc/150?img=3",
         name: "Lucas Rocha",
         email: "lucas.rocha@example.com",
         description: "Especialista em automação e integrações.",
+        keySkills: ["Python", "Zapier", "Integromat"],
       ),
     ];
 
     value.isLoading = false;
     notifyListeners();
+  }
+
+  void processCandidate() {
+    // Simula um processamento do arquivo → gerar um candidato mockado
+    final mock = Candidate(
+      photoUrl: "https://i.pravatar.cc/150?img=5",
+      name: "Candidato Processado",
+      email: "processado@example.com",
+      description: "Este candidato foi gerado automaticamente após o upload.",
+      keySkills: ["Habilidade A", "Habilidade B", "Habilidade C"],
+    );
+
+    // Limpa seleção e lista de uploads (opcional)
+    value = value.copyWith(
+      fileName: null,
+      uploadedFiles: [],
+      isLoading: false,
+    );
+
+    // Abre tela de detalhes do candidato
+    openCandidate(mock);
   }
 }
