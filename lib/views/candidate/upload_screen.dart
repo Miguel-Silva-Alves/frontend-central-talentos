@@ -186,7 +186,11 @@ class _UploadScreenState extends State<UploadScreen> {
                   width: 240,
                   height: 48,
                   child: ElevatedButton(
-                    onPressed: vm.processCandidate, // <-- sua função aqui
+                    onPressed: () async {
+                      debugPrint("Processar candidato");
+                      await vm.processCandidate();
+                      debugPrint("Processamento concluído");
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF007BFF),
                       shape: RoundedRectangleBorder(

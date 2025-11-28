@@ -48,14 +48,14 @@ class LoginService {
       debugPrint("Erro no login: $e");
     }
 
-    // return null;
-    return User(
-      id: 1,
-      token: "token",
-      email: email,
-      name: email,
-      photoUrl: "",
-      roles: [Role.partner],
-    );
+    return null;
+    // return User(
+    //   id: 1,
+    //   token: "token",
+    //   email: email,
+    //   name: email,
+    //   photoUrl: "",
+    //   roles: [Role.partner],
+    // );
   }
 }
