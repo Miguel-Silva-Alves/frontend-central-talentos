@@ -16,6 +16,7 @@ class Candidate {
   final String? location; // "São Paulo"
   final String? currentPosition; // "Desenvolvedor"
   final List<int>? files; // [8]
+  final List<Map<String, dynamic>>? filesUploaded;
 
   Candidate({
     required this.photoUrl,
@@ -33,6 +34,7 @@ class Candidate {
     this.location,
     this.currentPosition,
     this.files,
+    this.filesUploaded,
   });
 
   Candidate copyWith({
@@ -51,6 +53,7 @@ class Candidate {
     String? location,
     String? currentPosition,
     List<int>? files,
+    List<Map<String, dynamic>>? filesUploaded,
   }) {
     return Candidate(
       photoUrl: photoUrl ?? this.photoUrl,
@@ -66,6 +69,7 @@ class Candidate {
       location: location ?? this.location,
       currentPosition: currentPosition ?? this.currentPosition,
       files: files ?? this.files,
+      filesUploaded: filesUploaded ?? this.filesUploaded,
     );
   }
 
@@ -89,6 +93,9 @@ class Candidate {
       location: json["location"],
       currentPosition: json["current_position"],
       files: json["files"] != null ? List<int>.from(json["files"]) : null,
+      filesUploaded: json["files_uploaded"] != null
+          ? List<Map<String, dynamic>>.from(json["files_uploaded"])
+          : null,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontend_central_talentos/models/candidate.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'candidate_detail_model.dart';
 import 'candidate_detail_vm.dart';
@@ -163,6 +164,41 @@ class _CandidateDetailScreenState extends State<CandidateDetailScreen> {
                 ),
 
           const SizedBox(height: 28),
+          _buildEditableField(
+            label: "Data de nascimento",
+            isEditing: model.isEditingBirthDate,
+            onEditTap: vm.toggleEditingBirthDate,
+            controller: model.birthDateCtrl,
+            displayValue: widget.candidate.birthDate ?? "---",
+          ),
+          _buildEditableField(
+            label: "Telefone",
+            isEditing: model.isEditingPhone,
+            onEditTap: vm.toggleEditingPhone,
+            controller: model.phoneCtrl,
+            displayValue: widget.candidate.phone ?? "---",
+          ),
+          _buildEditableField(
+            label: "Anos de experiência",
+            isEditing: model.isEditingYearsExperience,
+            onEditTap: vm.toggleEditingYearsExperience,
+            controller: model.yearsExperienceCtrl,
+            displayValue: widget.candidate.yearsExperience?.toString() ?? "---",
+          ),
+          _buildEditableField(
+            label: "Localização",
+            isEditing: model.isEditingLocation,
+            onEditTap: vm.toggleEditingLocation,
+            controller: model.locationCtrl,
+            displayValue: widget.candidate.location ?? "---",
+          ),
+          _buildEditableField(
+            label: "Cargo atual",
+            isEditing: model.isEditingCurrentPosition,
+            onEditTap: vm.toggleEditingCurrentPosition,
+            controller: model.currentPositionCtrl,
+            displayValue: widget.candidate.currentPosition ?? "---",
+          ),
 
           // -----------------------------------------
           // HABILIDADES PRINCIPAIS
@@ -217,6 +253,10 @@ class _CandidateDetailScreenState extends State<CandidateDetailScreen> {
 
           const SizedBox(height: 32),
 
+          _buildFilesSection(candidate),
+
+          const SizedBox(height: 32),
+
           // -----------------------------------------
           // BOTÃO SALVAR GERAL
           // -----------------------------------------
@@ -238,6 +278,155 @@ class _CandidateDetailScreenState extends State<CandidateDetailScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFilesSection(Candidate candidate) {
+    final files = candidate.filesUploaded ?? [];
+
+    if (files.isEmpty) {
+      return const Text(
+        "Nenhum arquivo enviado",
+        style: TextStyle(color: Colors.white70),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 20),
+        const Text(
+          "Arquivos enviados",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...files.map((file) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white10,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // 📝 Nome + Tamanho
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        file["name"] ?? "Sem nome",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                      ),
+                      Text(
+                        "${file["size_mb"]?.toStringAsFixed(2)} MB",
+                        style: const TextStyle(
+                          color: Colors.white54,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(width: 12),
+
+                // ⬇ Botão de download
+                GestureDetector(
+                  onTap: () async {
+                    final url = file["download_url"];
+                    if (url != null) {
+                      await _downloadFile(url, file["name"]);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.blueAccent,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.download, size: 18, color: Colors.white),
+                        SizedBox(width: 4),
+                        Text("Baixar", style: TextStyle(color: Colors.white)),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Future<void> _downloadFile(String url, String fileName) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } else {
+      debugPrint("Erro ao abrir $url");
+    }
+  }
+
+  Widget _buildEditableField({
+    required String label,
+    required bool isEditing,
+    required VoidCallback onEditTap,
+    required TextEditingController controller,
+    required String displayValue,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(width: 6),
+            GestureDetector(
+              onTap: onEditTap,
+              child: const Icon(Icons.edit, color: Colors.white70, size: 18),
+            )
+          ],
+        ),
+        const SizedBox(height: 10),
+        isEditing
+            ? TextField(
+                controller: controller,
+                style: const TextStyle(color: Colors.white),
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white12,
+                  border: OutlineInputBorder(),
+                ),
+              )
+            : Text(
+                displayValue,
+                style: const TextStyle(color: Colors.white70),
+              ),
+        const SizedBox(height: 20),
+      ],
     );
   }
 }

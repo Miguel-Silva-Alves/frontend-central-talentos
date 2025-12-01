@@ -10,6 +10,18 @@ class CandidateDetailVm extends ValueNotifier<CandidateDetailModel> {
   CandidateDetailVm(Candidate candidate)
       : super(CandidateDetailModel(candidate: candidate)) {
     candidateService = CandidateService();
+
+    value.descriptionCtrl = TextEditingController(text: candidate.description);
+    value.birthDateCtrl =
+        TextEditingController(text: candidate.birthDate ?? "");
+    value.phoneCtrl = TextEditingController(text: candidate.phone ?? "");
+    value.yearsExperienceCtrl = TextEditingController(
+      text: candidate.yearsExperience?.toString() ?? "",
+    );
+    value.locationCtrl = TextEditingController(text: candidate.location ?? "");
+    value.currentPositionCtrl = TextEditingController(
+      text: candidate.currentPosition ?? "",
+    );
   }
 
   Future<void> saveCandidate() async {
@@ -51,6 +63,31 @@ class CandidateDetailVm extends ValueNotifier<CandidateDetailModel> {
     value = value.copyWith(
       candidate: value.candidate.copyWith(keySkills: updatedSkills),
     );
+    notifyListeners();
+  }
+
+  void toggleEditingBirthDate() {
+    value.isEditingBirthDate = !value.isEditingBirthDate;
+    notifyListeners();
+  }
+
+  void toggleEditingPhone() {
+    value.isEditingPhone = !value.isEditingPhone;
+    notifyListeners();
+  }
+
+  void toggleEditingYearsExperience() {
+    value.isEditingYearsExperience = !value.isEditingYearsExperience;
+    notifyListeners();
+  }
+
+  void toggleEditingLocation() {
+    value.isEditingLocation = !value.isEditingLocation;
+    notifyListeners();
+  }
+
+  void toggleEditingCurrentPosition() {
+    value.isEditingCurrentPosition = !value.isEditingCurrentPosition;
     notifyListeners();
   }
 }
