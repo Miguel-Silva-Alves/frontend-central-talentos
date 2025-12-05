@@ -55,6 +55,7 @@ class CandidateService {
     int? yearsExperience,
     String? location,
     String? currentPosition,
+    String? resume,
     required List<int> files,
   }) async {
     final url = Uri.parse("$baseUrl/company/candidates");
@@ -68,6 +69,7 @@ class CandidateService {
       "location": location,
       "current_position": currentPosition,
       "files": files,
+      "profile_resume": resume
     };
 
     try {

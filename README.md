@@ -1,4 +1,4 @@
-# CoreSafe RH
+# Central de Talentos
 
 A project to management rh metrics.
 
@@ -17,4 +17,4 @@ samples, guidance on mobile development, and a full API reference.
 
 ## Running with FVM
 - dart pub global activate fvm && export PATH="$PATH":"$HOME/.pub-cache/bin"
-- fvm flutter run
+- fvm flutter run -d chrome

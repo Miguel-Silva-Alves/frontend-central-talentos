@@ -32,7 +32,7 @@ class _AIHomeScreenState extends State<AIHomeScreen> {
             final goTo = model.goTo!;
             model.goTo = null;
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.of(context).pushNamed(goTo);
+              Navigator.of(context).pushNamed(goTo, arguments: model.argument);
             });
           }
 
@@ -75,7 +75,11 @@ class _AIHomeScreenState extends State<AIHomeScreen> {
                                     .map((c) => Padding(
                                           padding:
                                               const EdgeInsets.only(bottom: 20),
-                                          child: AiCandidateCard(candidate: c),
+                                          child: AiCandidateCard(
+                                            candidate: c,
+                                            onTap: () =>
+                                                vm.openCandidateDetail(c),
+                                          ),
                                         ))
                                     .toList(),
                               ),

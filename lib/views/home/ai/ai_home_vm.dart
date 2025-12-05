@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_central_talentos/models/candidate.dart';
 import 'package:frontend_central_talentos/provider/user_logged_provider.dart';
 import 'package:frontend_central_talentos/services/ai_service.dart';
 import 'package:frontend_central_talentos/views/home/ai/ai_home_model.dart';
+import 'package:frontend_central_talentos/views/routes/app_routes.dart';
 
 class AIHomeVm extends ValueNotifier<AiHomeModel> {
   late AiService aiService;
@@ -28,6 +30,12 @@ class AIHomeVm extends ValueNotifier<AiHomeModel> {
       isLoading: false,
     );
 
+    notifyListeners();
+  }
+
+  openCandidateDetail(Candidate candidate) {
+    value.goTo = AppRoutes.candidateInput;
+    value.argument = candidate;
     notifyListeners();
   }
 }

@@ -2,6 +2,7 @@ import 'package:frontend_central_talentos/models/candidate.dart';
 
 class AiHomeModel {
   String? goTo;
+  Object? argument;
   bool showSidebar;
   List<Candidate> candidates;
   bool isLoading;

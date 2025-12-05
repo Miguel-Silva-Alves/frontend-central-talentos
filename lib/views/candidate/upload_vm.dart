@@ -10,8 +10,11 @@ import 'upload_model.dart';
 
 class UploadVm extends ValueNotifier<UploadModel> {
   late CandidateService candidatesService;
-  UploadVm() : super(UploadModel()) {
+  UploadVm(Candidate? candidate) : super(UploadModel()) {
     candidatesService = CandidateService();
+    if (candidate != null) {
+      openCandidate(candidate);
+    }
   }
 
   Uint8List? fileBytes;
@@ -157,7 +160,7 @@ class UploadVm extends ValueNotifier<UploadModel> {
               .sublist(0, 5),
           photoUrl: "",
           location: fileJson["info"]["location"] ?? "",
-          birthDate: fileJson["info"]["idade"] ?? "",
+          birthDate: fileJson["info"]["idade"].toString(),
           phone: fileJson["info"]["telefone"] ?? "",
           yearsExperience: fileJson["info"]["anos_experiencia"] ?? 0,
           matchScore: 0.0,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontend_central_talentos/models/candidate.dart';
 import 'package:frontend_central_talentos/views/candidate/detail/candidate_detail_screen.dart';
 import 'package:frontend_central_talentos/views/candidate/widgets/candidate_list.dart';
 import 'package:frontend_central_talentos/views/components/sidebar/sidebar_component.dart';
@@ -9,8 +10,10 @@ import 'package:frontend_central_talentos/views/routes/app_routes.dart';
 import 'upload_model.dart';
 import 'upload_vm.dart';
 
+// ignore: must_be_immutable
 class UploadScreen extends StatefulWidget {
-  const UploadScreen({super.key});
+  Candidate? candidate;
+  UploadScreen({super.key, this.candidate});
 
   @override
   State<UploadScreen> createState() => _UploadScreenState();
@@ -22,7 +25,7 @@ class _UploadScreenState extends State<UploadScreen> {
   @override
   void initState() {
     super.initState();
-    vm = UploadVm();
+    vm = UploadVm(widget.candidate);
   }
 
   @override

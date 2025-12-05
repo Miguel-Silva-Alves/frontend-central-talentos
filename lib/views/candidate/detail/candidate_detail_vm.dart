@@ -30,15 +30,15 @@ class CandidateDetailVm extends ValueNotifier<CandidateDetailModel> {
 
     final token = UserProvider().user?.token ?? "";
     await candidateService.createCandidate(
-      token: token,
-      name: value.candidate.name,
-      email: value.candidate.email,
-      phone: value.candidate.phone,
-      yearsExperience: value.candidate.yearsExperience,
-      location: value.candidate.location,
-      currentPosition: value.candidate.currentPosition,
-      files: value.candidate.files ?? [],
-    );
+        token: token,
+        name: value.candidate.name,
+        email: value.candidate.email,
+        phone: value.candidate.phone,
+        yearsExperience: value.candidate.yearsExperience,
+        location: value.candidate.location,
+        currentPosition: value.candidate.currentPosition,
+        files: value.candidate.files ?? [],
+        resume: value.candidate.description);
 
     value = value.copyWith(isSaving: false, saved: true);
     notifyListeners();

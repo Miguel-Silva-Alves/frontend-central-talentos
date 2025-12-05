@@ -33,11 +33,28 @@ class CandidateDetailModel {
     bool? saved,
     bool? isEditingDescription,
   }) {
-    return CandidateDetailModel(
+    final newModel = CandidateDetailModel(
       candidate: candidate ?? this.candidate,
       isSaving: isSaving ?? this.isSaving,
       saved: saved ?? this.saved,
       isEditingDescription: isEditingDescription ?? this.isEditingDescription,
     );
+
+    // 🔥 Copia os controllers para o novo model
+    newModel.descriptionCtrl = descriptionCtrl;
+    newModel.birthDateCtrl = birthDateCtrl;
+    newModel.phoneCtrl = phoneCtrl;
+    newModel.yearsExperienceCtrl = yearsExperienceCtrl;
+    newModel.locationCtrl = locationCtrl;
+    newModel.currentPositionCtrl = currentPositionCtrl;
+
+    // 🔥 Copia flags também
+    newModel.isEditingBirthDate = isEditingBirthDate;
+    newModel.isEditingPhone = isEditingPhone;
+    newModel.isEditingYearsExperience = isEditingYearsExperience;
+    newModel.isEditingLocation = isEditingLocation;
+    newModel.isEditingCurrentPosition = isEditingCurrentPosition;
+
+    return newModel;
   }
 }
